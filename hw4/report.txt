@@ -1,0 +1,73 @@
+Name: Won-Jin Kim
+Student Number: 1003611424
+
+
+Q1. Why is it important to #ifdef out methods and datastructures that aren’t used for different versions of
+randtrack? 
+A: If we use #ifdef, only the code that satisfy certain condition would be compiled. If we are linking multiple headerfiles, there is possiblity that same variable and function would be declared multiple times. Using #ifdef could remove the possibility of duplicate declaration.  
+
+
+Q2. Can you implement this without modifying the hash class, or without knowing its internal
+implementation? 
+A: yes. hash class provides upper bound of the hash table. Even though we don't know internal implementation we could just create locks as same number as size of hash table. 
+
+Q3. Can you properly implement this solely by modifying the hash class methods lookup and insert?
+Explain
+A: No. Besides insert and lookup, the operation to increment the counter works on the critical section(shared memory). For this reason implement could not happen by solely modifying the hash class methods lookup and insert.
+
+
+Q4. Can you implement this by adding to the hash class a new function lookup and insert if absent? Explain
+A: No. The increment operation would not be resolved my new function loopup nor insert. Although this might solve race conditions during insert.
+
+Q5. Can you implement it by adding new methods to the hash class lock list and unlock list? Explain.
+Implement the simplest solution above that works (or a better one if you can think of one). 
+A: Yes. Lock could be called before the lookup and unlock could be called after increment. This prevent any race condition that could've happened during insertion and increment operation. 
+
+Q6. How difficult was using TM compared to implementing list locking above? 
+A: This question is out of scope for this lab.
+
+Q7. What are the pros and cons of this approach? 
+A: Pros would be that this approach doesn't need thread waiting to enter shared memory region, boosting performance. Cons would be since we are creating many copy of the hash table, we use lots of memory.
+
+
+Q8. For samples to skip set to 50, what is the overhead for each parallelization approach? Report this as the
+runtime of the parallel version with one thread divided by the runtime of the single-threaded version.
+A: 
+global lock: 6.84/6.72 = 1.0179
+list-level locks: 7.11/6.72 = 1.0580
+element-level locks: 7.08/6.72 = 1.0536
+Reduction 6.71/6.72 = 0.999 = ~1
+
+
+Q9. How does each approach perform as the number of threads increases? If performance gets worse for a
+certain case, explain why that may have happened.
+A: As number of threads increase time to finish executing the code decreases. when we have a single thread, using lock generally decrease the performance due to synchronization overhead(lock is expensive operation). The performance generally increases
+as thread increase however from the experiment global lock improved performance when there are two thread but got worse when there is 4. For global lock this could be due to large range of code that lock overs, meaning as thread increases more threads spend time waiting
+for other thread to finish. 
+
+with sample to skip = 50
+Threads 			     1	   2      4
+default				    6.72   
+global lock: 	        6.84  4.35  5.15	
+list-level locks: 		7.11  3.91	2.37
+element-level locks: 	7.08  3.84	2.31
+Reduction: 		        6.71  3.44	1.72
+
+Q10. Repeat the data collection above with samples to skip set to 100 and give the table. How does this
+change impact the results compared with when set to 50? Why?
+A: 
+with sample to skip = 100
+Threads 			     1	     2       4
+default				    13.21   
+global lock: 	        13.40   7.44    4.96	
+list-level locks: 		13.55   7.19	4.06
+element-level locks: 	13.52   7.04	3.84
+Reduction: 		        13.19   6.61	3.39
+
+The samples are large enough that this time in contract to last one all the lock improve the performance of the program. As seen before reduction was one that perform the best. 
+
+
+Q11. Which approach should OptsRus ship? Keep in mind that some customers might be using multicores
+with more than 4 cores, while others might have only one or two cores. 
+A: from our experiment reduction with 4 thread had best performance. OptRus should ship reduction since it performance well and it does not have lock implementation which boosts the speed of the program by a little. However if customer is
+concerned with the memory usage, OptRus could also consider shipping approach with element-level locks since it doesn't use as much memory as reduction yet has high performance relative to other approachs.

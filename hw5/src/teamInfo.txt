@@ -1,0 +1,4 @@
+teamName: TTGH  
+student1_fullName: Won-Jin Kim
+student1_studentNumber: 1003611424
+student1_email: wonjin.kim@mail.utoronto.ca

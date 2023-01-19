@@ -1,0 +1,9 @@
+Set of Optimization
+1. Seperated the task to 16 different threads. 
+2. Used CPU_SET to stick threads on one CPU.
+3. Initalized the board based on its current status and its neighbor count. 
+4. Use the optimization done for part3 so that I could determine cell's status and remove any redundant operations.
+5. Use double-buffer design pattern, so I use different boards for reading and writing(enhence in terms of synchronization).
+6. loop unrolling while saving.
+7. make sure I initialize the board before writing.
+8. avoid false cache line sharing by adding __attribute__((aligned(number))) to the thread argument.
